@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Investment Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Property Investment Prediction</h1>
+        <form id="locationForm">
+            <label for="location">Enter Location:</label>
+            <input type="text" id="location" name="location" required>
+            <button type="submit">Get Prediction</button>
+        </form>
+
+        <div id="propertyResults" class="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('locationForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const location = document.getElementById('location').value;
+            
+            const response = await fetch('http://127.0.0.1:8000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ location: location })
+            });
+            
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById('propertyResults');
+            resultsDiv.innerHTML = '';  // Clear previous results
+            
+            if (data.error) {
+                resultsDiv.innerHTML = `<p>${data.error}</p>`;
+            } else {
+                data.property_names.forEach((name, index) => {
+                    resultsDiv.innerHTML += `
+                        <div class="card">
+                            <h3>${name}</h3>
+                            <p>Predicted Price: $${data.predicted_prices[index].toFixed(2)}</p>
+                        </div>
+                    `;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
