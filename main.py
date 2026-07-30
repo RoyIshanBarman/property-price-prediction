@@ -91,29 +91,29 @@ nn_model_instance = create_nn_model()
 nn_model_instance.fit(X_train_scaled, y_train, epochs=100, batch_size=32, verbose=0)
 save_model(nn_model_instance, 'nn_model.h5')
 
-# Wrap the neural network model with KerasRegressor for stacking
+
 nn_model = KerasRegressor(model=create_nn_model, epochs=100, batch_size=32, verbose=0)
 
-# Stack models using StackingRegressor
+
 stacked_model = StackingRegressor(
     estimators=[('xgb', xgb_model), ('nn', nn_model)],
     final_estimator=xgb.XGBRegressor()
 )
 
-# Train the stacked model
+
 stacked_model.fit(X_train_scaled, y_train)
 
-# Save the XGBoost model and scaler
+
 joblib.dump(xgb_model, 'xgb_model.pkl')
 joblib.dump(scaler, 'scaler.pkl')
 
-# Make predictions
+
 stacked_test_preds = stacked_model.predict(X_test_scaled)
 
-# Calculate appreciation rate
+
 appreciation_rate = (stacked_test_preds - y_test.values) / y_test.values
 
-# Generate recommendations based on appreciation rates
+
 def recommend_appreciation(rate):
     if rate > 0.3:
         return "Strong Buy"
@@ -126,7 +126,7 @@ def recommend_appreciation(rate):
 
 recommendations = [recommend_appreciation(rate) for rate in appreciation_rate]
 
-# Prepare the results DataFrame
+
 results_df = pd.DataFrame({
     'Property_Name': property_names_test.values,
     'Actual_Price': y_test.values,
