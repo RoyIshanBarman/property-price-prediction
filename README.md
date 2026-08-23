@@ -1,4 +1,4 @@
-# Property Investment Advisor
+# Propify
 
 A machine learning system that predicts property prices and generates buy/hold/sell-style investment recommendations for real estate listings, served through a Flask API and a browser-based dashboard.
 
